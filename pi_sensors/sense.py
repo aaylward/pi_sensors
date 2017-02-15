@@ -9,12 +9,12 @@ from envirophat import weather, light
 DELIVERY_STREAM = 'pi_sensors'
 SLEEP_INTERVAL_SECONDS = 1
 
+
 def millis():
     return int(round(time.time() * 1000))
 
-def report_stats():
-    client = boto3.client('firehose')
 
+def get_enviro_line():
     sensor_data = {
         'temperature': weather.temperature(),
         'pressure': weather.pressure(),
@@ -22,9 +22,13 @@ def report_stats():
         'time': millis()
     }
 
-    client.put_record(
+    return json.dumps(sensor_data) + '\n'
+
+
+def report_stats():
+    boto3.client('firehose').put_record(
         DeliveryStreamName=DELIVERY_STREAM,
-        Record={ 'Data': json.dumps(sensor_data) }
+        Record={ 'Data': get_enviro_line() }
     )
 
 
