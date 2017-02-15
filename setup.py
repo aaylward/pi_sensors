@@ -14,4 +14,7 @@ setup(
   download_url = 'https://github.com/aaylward/pi_sensors/tarball/0.1',
   keywords = ['raspberry pi', 'enviro-phat', 'kinesis', 'firehose'],
   classifiers = [],
+  entry_points = {
+    'console_scripts': ['sense=pi_sensors.sense:main'],
+  },
 )
