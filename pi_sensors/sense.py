@@ -3,11 +3,12 @@
 import time
 import boto3
 import json
-from concurrent.futures import ProcessPoolExecutor as Pool
 from envirophat import weather, light
 
 DELIVERY_STREAM = 'pi_sensors'
 SLEEP_INTERVAL_SECONDS = 1
+
+CLIENT = boto3.client('firehose');
 
 
 def millis():
@@ -26,17 +27,16 @@ def get_enviro_line():
 
 
 def report_stats():
-    boto3.client('firehose').put_record(
+    CLIENT.put_record(
         DeliveryStreamName=DELIVERY_STREAM,
         Record={ 'Data': get_enviro_line() }
     )
 
 
 def main():
-    with Pool() as executor:
-        while True:
-            executor.submit(report_stats)
-            time.sleep(SLEEP_INTERVAL_SECONDS)
+    while True:
+        report_stats()
+        time.sleep(SLEEP_INTERVAL_SECONDS)
 
 
 if __name__=='__main__':
