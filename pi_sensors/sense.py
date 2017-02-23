@@ -3,14 +3,10 @@
 import time
 import json
 import os
-import boto3
 import requests
 from envirophat import weather, light
 
-DELIVERY_STREAM = 'pi_sensors'
 SLEEP_INTERVAL_SECONDS = 1
-
-CLIENT = boto3.client('firehose')
 DEVICE_ID = os.environ['DEVICE_ID']
 
 
@@ -28,16 +24,8 @@ def get_enviro_line():
     }
 
 
-
 def report_stats():
-    payload = get_enviro_line()
-
-    CLIENT.put_record(
-        DeliveryStreamName=DELIVERY_STREAM,
-        Record={ 'Data': json.dumps(payload) + '\n' }
-    )
-
-    r = requests.post('https://api.tippypi.com/v1/sensors', data = payload)
+    r = requests.post('https://api.tippypi.com/v1/sensors', data=get_enviro_line())
     print r.status_code
 
 
