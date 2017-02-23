@@ -11,6 +11,7 @@ from envirophat import weather, light
 SLEEP_INTERVAL_SECONDS = 1
 DEVICE_ID = os.environ['DEVICE_ID']
 API_KEY = os.environ['ENVIRO_KEY']
+DEBUG = os.getenv('DEBUG')
 DELIVERY_STREAM = 'pi_sensors'
 CLIENT = boto3.client('firehose')
 
@@ -32,13 +33,18 @@ def get_enviro_line():
 def report_to_tippyapi(stats):
     headers = {'Content-type': 'application/json', 'Accept': 'application/json', 'enviro-key': API_KEY}
     r = requests.post('https://api.tippypi.com/v1/sensors', json=stats, headers=headers)
+    if DEBUG:
+        print "tippyapi status code : {}".format(r.status_code)
 
 
 def report_to_firehose(stats):
-    CLIENT.put_record(
+    r = CLIENT.put_record(
             DeliveryStreamName=DELIVERY_STREAM,
             Record={ 'Data': json.dumps(stats) + '\n' }
     )
+
+    if DEBUG:
+        print "firehose response : {}".format(repr(r))
 
 
 def report_stats():
