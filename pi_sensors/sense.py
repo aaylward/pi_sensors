@@ -8,6 +8,7 @@ from envirophat import weather, light
 
 SLEEP_INTERVAL_SECONDS = 1
 DEVICE_ID = os.environ['DEVICE_ID']
+API_KEY = os.environ['ENVIRO_KEY']
 
 
 def millis():
@@ -25,7 +26,8 @@ def get_enviro_line():
 
 
 def report_stats():
-    r = requests.post('https://api.tippypi.com/v1/sensors', data=get_enviro_line())
+    headers = {'Content-type': 'application/json', 'Accept': 'application/json', 'enviro-key': API_KEY}
+    r = requests.post('https://api.tippypi.com/v1/sensors', json=get_enviro_line(), headers=headers)
     print r.status_code
 
 
