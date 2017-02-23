@@ -4,6 +4,7 @@ import time
 import json
 import os
 import boto3
+import requests
 from envirophat import weather, light
 
 DELIVERY_STREAM = 'pi_sensors'
@@ -18,7 +19,7 @@ def millis():
 
 
 def get_enviro_line():
-    sensor_data = {
+    return {
         'temperature': weather.temperature(),
         'pressure': weather.pressure(),
         'light': light.light(),
@@ -26,14 +27,18 @@ def get_enviro_line():
         'time': millis()
     }
 
-    return json.dumps(sensor_data) + '\n'
 
 
 def report_stats():
+    payload = get_enviro_line()
+
     CLIENT.put_record(
         DeliveryStreamName=DELIVERY_STREAM,
-        Record={ 'Data': get_enviro_line() }
+        Record={ 'Data': json.dumps(payload) + '\n' }
     )
+
+    r = requests.post('https://api.tippypi.com/v1/sensors', data = payload)
+    print r.status_code
 
 
 def main():
