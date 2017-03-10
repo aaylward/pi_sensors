@@ -58,7 +58,7 @@ def main():
         try:
             report_stats()
         except Exception as e:
-            print 'error reporting stats: ', e
+            print 'error reporting stats: ', repr(e)
         time.sleep(SLEEP_INTERVAL_SECONDS)
 
 
