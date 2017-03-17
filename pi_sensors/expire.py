@@ -10,7 +10,7 @@ DEBUG = os.getenv('DEBUG')
 
 def main():
     headers = {'Content-type': 'application/json', 'Accept': 'application/json', 'enviro-key': API_KEY}
-    r = requests.post('https://api.tippypi.com/v1/sensors/expire?deviceId=' + DEVICE_ID, headers=headers)
+    r = requests.post('https://api.tippypi.com/v1/sensors/expire?deviceId={}'.format(DEVICE_ID), headers=headers)
     if DEBUG:
         print "tippyapi status code : {}".format(r.status_code)
 
